@@ -1,3 +1,8 @@
+const articleRoutes = new Map([
+  ['匹克球在打什麼？一個回合如何開始與結束？', 'article-rally'],
+  ['中間球應該由誰接？', 'article-middle'],
+]);
+
 const chapters = [
 ['認識場地與比賽','從球場開始，建立理解每一拍的共同語言。',`匹克球在打什麼？一個回合如何開始與結束？
 看懂球場：底線、邊線、中線與 Kitchen
@@ -112,4 +117,4 @@ Dink 應該打直線、斜線，還是中間？
 +失誤來自動作、選球，還是站位？
 +看比賽影片時，應該觀察什麼？
 +比分與壓力如何影響風險選擇？`]
-].map(([title,description,raw],i)=>({id:i+1,title,description,topics:raw.split('\n').map(t=>({title:t.replace(/^[+@]/,''),level:t.startsWith('+')?'進階':'基礎',heading:t.startsWith('@'),ready:t==='中間球應該由誰接？'}))}));
+].map(([title,description,raw],i)=>({id:i+1,title,description,topics:raw.split('\n').map(t=>({title:t.replace(/^[+@]/,''),level:t.startsWith('+')?'進階':'基礎',heading:t.startsWith('@'),route:articleRoutes.get(t)}))}));
