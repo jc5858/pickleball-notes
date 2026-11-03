@@ -20,11 +20,82 @@ function article(){return `<div class="article-layout"><aside class="sidebar" ar
 function updateBoard(){document.getElementById('board-content').innerHTML=`<div class="tactics-body">${court(scenario,step)}<div class="step-copy" aria-live="polite"><p class="eyebrow">STEP ${num(step+1)}</p><h3>${scenarios[scenario][step][0]}</h3><p>${scenarios[scenario][step][1]}</p></div></div>`;document.getElementById('step-count').textContent=`${step+1} / 3`;document.getElementById('prev-step').disabled=step===0;document.getElementById('next-step').disabled=step===2;document.querySelectorAll('[data-scenario]').forEach(b=>b.setAttribute('aria-pressed',Number(b.dataset.scenario)===scenario?'true':'false'))}
 function glossary(){const terms=[['Dink','網前小球','通常在非截擊區線附近，以柔和球路讓球落入對方非截擊區。',4],['Drop','過渡球／放小球','從較後方打出較柔和的弧線，嘗試讓球落入對方非截擊區，爭取前進機會。',4],['Drive','抽球','較快速、較具穿透性的擊球；是否適合使用，仍取決於來球與站位。',4],['Volley','截擊','在球落地之前擊球。',4],['Reset','重置球／卸力球','在受壓迫時把球放柔，嘗試減少對手連續進攻的機會。',6],['Lob','挑高球','把球打高，嘗試越過對手或改變回合節奏。',4],['Poach','搶截','跨向搭檔原本負責的區域攔截來球，需要搭配溝通與補位。',10],['Stacking','疊位','透過起始站位與移動安排，讓搭檔盡量回到偏好的左右位置；仍須遵守發接球順序。',10]];return `<div class="page-head"><p class="eyebrow">QUICK REFERENCE</p><h1 class="page-title">中英文術語索引</h1><p>先理解意思，再進入相關章節。中文譯名可能因教練或地區而不同。</p></div><div class="glossary">${terms.map(([en,zh,desc,ch])=>`<section class="term"><h3>${en}<span>${zh}</span></h3><p>${desc}</p><a href="#catalog/${ch}">查看相關章節 →</a></section>`).join('')}</div>`}
 function info(sources){return `<div class="prose"><div class="page-head"><p class="eyebrow">${sources?'SOURCES & UPDATES':'ABOUT THE NOTES'}</p><h1 class="page-title">${sources?'規則來源與更新說明':'讓每一拍，都多一點理解。'}</h1></div>${sources?`<p>本站以 <a href="https://usapickleball.org/rules/">USA Pickleball 官方規則入口</a>公布的 <strong>2026 年規則</strong>作為規則文章的編輯依據。實際參賽仍需確認所屬賽事採用的規則與計分制度。</p><h2>規則與戰術，分開說明</h2><p>規則回答「是否合法」；戰術回答「在這個情境下是否適合」。本版已完成的中間球文章屬於戰術觀念，不是裁判判決指南。</p><h2>內容狀態</h2><p>2026-11-02：建立完整 12 章目錄，擴充身體準備與網球對照，完成回合入門文章、中間球分工文章及兩組戰術板情境。其他文章標示為「撰寫中」，不提供空白文章連結。</p><h2>來源如何呈現</h2><p>文章末尾列出參考資料、查閱日期與更新日期。球場圖由本站製作，僅用於解釋指定情境；不表示球速、時間或球員能力的精確模擬。</p>`:`<p>匹克球觀念筆記是一個公開閱讀的知識網站。從場地、動作到雙打合作，除了「怎麼打」，也想把「為什麼」與「什麼時候」說清楚。</p><h2>怎麼使用這本筆記？</h2><p>第一次接觸，可以沿著<a href="#beginner">新手路線</a>找起點；有對打經驗，則從<a href="#advanced">進階路線</a>建立判斷。遇到特定問題，直接搜尋<a href="#catalog">所有主題</a>。</p><h2>常見問題</h2><details class="chapter"><summary><h3>需要登入或記錄學習進度嗎？</h3><span class="chevron">＋</span></summary><p style="padding:0 22px">不用。所有內容開放閱讀，沒有個人評分、登入或進度追蹤。</p></details><details class="chapter"><summary><h3>有網球經驗，應該先看哪裡？</h3><span class="chevron">＋</span></summary><p style="padding:0 22px">第 03 章規劃了握拍、揮拍、網前截擊、步法與發球的網球對照。<a href="#catalog/3">查看章節</a>。</p></details><details class="chapter"><summary><h3>為什麼有些題目不能點？</h3><span class="chevron">＋</span></summary><p style="padding:0 22px">這些是尚在撰寫的文章規劃。目前先提供完整知識地圖與已完成的文章，後續逐步擴充。</p></details><h2>關於內容</h2><p>以雙打實戰為主，單打獨立成章。基礎與進階標籤表示內容深度，並非對讀者能力的評分。</p><a href="#sources">查看規則來源與更新說明 →</a>`}</div>`}
+const rallyFrames = [
+  {
+    title: '第一拍 · A 斜線發球',
+    path: 'M180 482 L80 69',
+    players: [[180, 491], [75, 467], [75, 33], [187, 170]],
+    bounce: [80, 69, '1'],
+    note: '近端的 A 從右側底線後發球，球越過網前的 Kitchen，落在遠端左側的對角發球區。① 是這個回合必須出現的第一次落地。'
+  },
+  {
+    title: '第二拍 · C 等球彈起再接發',
+    path: 'M80 67 L166 424',
+    players: [[180, 486], [75, 467], [65, 49], [187, 170]],
+    bounce: [166, 424, '2'],
+    note: 'C 接起已經彈過的發球，將球回深。② 是接發球在 A、B 這側的落點。即使球飛得很慢，A 也要先等這次落地。'
+  },
+  {
+    title: '第三拍 · A 在落地後回擊',
+    path: 'M166 422 L177 215',
+    players: [[177, 444], [75, 467], [83, 141], [187, 170]],
+    note: 'A 讓接發球彈起才出手，這裡示範把球送向對方網前。球若還在空中，對手這時可以在 Kitchen 線外截擊，也可以等球彈起再打。'
+  }
+];
+
+function rallyCourt(frame) {
+  const players = frame.players.map(([x, y], i) => {
+    const letter = 'ABCD'[i];
+    return `<circle cx="${x}" cy="${y}" r="11" fill="${i < 2 ? '#e6edc3' : '#d59c75'}" stroke="#20382e"/>
+      <text x="${x}" y="${y + 4}" text-anchor="middle" fill="#20382e" font-size="12" font-weight="700">${letter}</text>`;
+  }).join('');
+  const landing = frame.bounce ? `<circle cx="${frame.bounce[0]}" cy="${frame.bounce[1]}" r="10" fill="#ffe68b" stroke="#20382e"/>
+    <text x="${frame.bounce[0]}" y="${frame.bounce[1] + 4}" text-anchor="middle" font-size="12" font-weight="700">${frame.bounce[2]}</text>` : '';
+  return `<svg class="court" viewBox="0 0 260 522" role="img" aria-label="${frame.title}。${frame.note}">
+    <defs><marker id="rally-arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0 0L5 2.5L0 5" fill="#ffe68b"/></marker></defs>
+    <rect x="30" y="35" width="200" height="440" fill="#37644e"/>
+    <rect x="30" y="185" width="200" height="140" fill="#819d7b"/>
+    <g stroke="#f5f5df" stroke-width="2" fill="none"><rect x="30" y="35" width="200" height="440"/><path d="M30 185H230M30 325H230M130 35V185M130 325V475"/></g>
+    <path d="M23 255H237" stroke="#20382e" stroke-width="5"/>
+    <text x="130" y="249" text-anchor="middle" fill="#fff" font-size="10">球網</text>
+    <text x="130" y="296" text-anchor="middle" fill="#fff" font-size="10">Kitchen</text>
+    <path d="${frame.path}" stroke="#ffe68b" stroke-width="3" fill="none" marker-end="url(#rally-arrow)"/>
+    ${players}${landing}
+    <g text-anchor="middle" fill="#20382e" font-size="11"><text x="130" y="15">對方 C、D</text><text x="130" y="516">我方 A、B</text></g></svg>`;
+}
+
+function rallyBoard() {
+  return `<h2>在球場上看前三拍</h2>
+    <section class="tactics" aria-label="前三拍戰術板">
+      <div class="board-head"><span>TACTICAL BOARD / 01.01</span><span>雙打 · 俯視圖</span></div>
+      <div id="rally-frame" class="tactics-body"></div>
+      <div class="legend">黃實線箭頭表示這一拍的球路；①、② 表示雙方必須等候的落地順序。球員位置是示例。</div>
+      <div class="controls"><button type="button" id="rally-prev">← 上一拍</button><span id="rally-count"></span><button type="button" id="rally-next">下一拍 →</button></div>
+    </section>`;
+}
+
+function mountRallyBoard() {
+  let index = 0;
+  const prev = document.getElementById('rally-prev');
+  const next = document.getElementById('rally-next');
+  function show() {
+    const frame = rallyFrames[index];
+    document.getElementById('rally-frame').innerHTML = rallyCourt(frame) +
+      `<div class="step-copy" aria-live="polite"><h3>${frame.title}</h3><p>${frame.note}</p></div>`;
+    document.getElementById('rally-count').textContent = `${index + 1} / ${rallyFrames.length}`;
+    prev.disabled = index === 0;
+    next.disabled = index === rallyFrames.length - 1;
+  }
+  prev.onclick = () => { if (index > 0) { index--; show(); } };
+  next.onclick = () => { if (index + 1 < rallyFrames.length) { index++; show(); } };
+  show();
+}
+
 function rallyArticle() {
   return `<article class="article prose">
     <p class="breadcrumb"><a href="#beginner">新手入門</a> / 第 01 章 / 認識場地與比賽</p>
     <h1>匹克球在打什麼？<br>一個回合如何開始與結束？</h1>
-    <div class="meta"><span class="tag">基礎觀念</span><span>雙打 · 回合入門</span><time datetime="2026-11-02">2026.11.02</time></div>
+    <div class="meta"><span class="tag">基礎觀念</span><span>雙打 · 回合入門</span><time datetime="2026-11-03">2026.11.03</time></div>
     <p class="core">第一回看球，先看球在哪一邊彈地。接發球的人要等發球落地，發球方也要等接發球落地。看懂這兩次落地，就看懂了回合的開頭。</p>
     <p>想像你和搭檔站在球網同一側。你們要把球打過網，讓球落在對方場內，或讓對手在球落地前接打。每次對手把球打回來，你們都要在球第二次落地前回擊。</p>
     <h2>跟著一顆球看前三拍</h2>
@@ -34,6 +105,7 @@ function rallyArticle() {
       <li><strong>第三拍，輪到你們。</strong>對手回了一顆高球，你很想直接揮拍。先讓它在你方場內彈一次，再由你或搭檔擊球。即使來球很高，這一拍仍要等它落地。</li>
     </ol>
     <div class="notice"><strong>兩次落地怎麼數？</strong>對方場內一次、你方場內一次。到第四拍，雙方都可以選擇落地後打，或在遵守 Kitchen 規則的前提下截擊。</div>
+    ${rallyBoard()}
     <h2>回合在哪一刻結束？</h2>
     <p>假設第三拍之後，你們又來回幾次。最後你把球送到對方底線附近，球在界內彈了一下，對手沒趕上。球在那一側第二次落地時，這個回合就結束，你們贏了回合。若球第一次就落在底線外，結果正好相反。</p>
     <h2>贏了回合，比分會加一嗎？</h2>
@@ -46,6 +118,6 @@ function rallyArticle() {
 }
 
 let lastPage='';
-function render(){const [rawPage,anchor]=location.hash.slice(1).split('/');const page=rawPage||'home';if(page==='article-middle'&&lastPage===page){document.getElementById(anchor||'main')?.scrollIntoView();return}lastPage=page;main.innerHTML=page==='home'?home():page==='catalog'?`<div class="catalog-intro"><p class="eyebrow">THE COMPLETE FIELD GUIDE</p><h1>所有主題</h1><p>從場地規則到攻防判斷，展開章節找到你想理解的問題。</p></div>${catalogControls()}<div id="catalog-list" class="catalog"></div>`:page==='beginner'?pathPage(false):page==='advanced'?pathPage(true):page==='article-rally'?rallyArticle():page==='article-middle'?article():page==='glossary'?glossary():page==='about'||page==='sources'?info(page==='sources'):`<div class="page-head"><h1>找不到這個頁面</h1><a href="#home">返回首頁</a></div>`;document.title=({home:'匹克球觀念筆記',catalog:'所有主題',beginner:'新手入門',advanced:'進階實戰','article-rally':'一個回合如何開始與結束？','article-middle':'雙打中間球應該由誰接？',glossary:'術語索引',about:'關於本站',sources:'規則來源與更新說明'}[page]||'找不到頁面')+(page==='home'?'':'｜匹克球觀念筆記');if(document.getElementById('catalog-list')){renderCatalog();['search','level','availability'].forEach(id=>document.getElementById(id).addEventListener(id==='search'?'input':'change',renderCatalog))}if(page==='article-middle'){scenario=0;step=0;updateBoard();document.querySelectorAll('[data-scenario]').forEach(b=>b.addEventListener('click',()=>{scenario=Number(b.dataset.scenario);step=0;updateBoard()}));document.getElementById('prev-step').onclick=()=>{step=Math.max(0,step-1);updateBoard()};document.getElementById('next-step').onclick=()=>{step=Math.min(2,step+1);updateBoard()}}window.scrollTo(0,0);if(page==='catalog'&&anchor)document.getElementById('chapter-'+Number(anchor))?.scrollIntoView();else if(page==='article-middle'&&anchor)document.getElementById(anchor)?.scrollIntoView();main.focus({preventScroll:true})}
+function render(){const [rawPage,anchor]=location.hash.slice(1).split('/');const page=rawPage||'home';if(page==='article-middle'&&lastPage===page){document.getElementById(anchor||'main')?.scrollIntoView();return}lastPage=page;main.innerHTML=page==='home'?home():page==='catalog'?`<div class="catalog-intro"><p class="eyebrow">THE COMPLETE FIELD GUIDE</p><h1>所有主題</h1><p>從場地規則到攻防判斷，展開章節找到你想理解的問題。</p></div>${catalogControls()}<div id="catalog-list" class="catalog"></div>`:page==='beginner'?pathPage(false):page==='advanced'?pathPage(true):page==='article-rally'?rallyArticle():page==='article-middle'?article():page==='glossary'?glossary():page==='about'||page==='sources'?info(page==='sources'):`<div class="page-head"><h1>找不到這個頁面</h1><a href="#home">返回首頁</a></div>`;document.title=({home:'匹克球觀念筆記',catalog:'所有主題',beginner:'新手入門',advanced:'進階實戰','article-rally':'一個回合如何開始與結束？','article-middle':'雙打中間球應該由誰接？',glossary:'術語索引',about:'關於本站',sources:'規則來源與更新說明'}[page]||'找不到頁面')+(page==='home'?'':'｜匹克球觀念筆記');if(document.getElementById('catalog-list')){renderCatalog();['search','level','availability'].forEach(id=>document.getElementById(id).addEventListener(id==='search'?'input':'change',renderCatalog))}if(page==='article-rally')mountRallyBoard();if(page==='article-middle'){scenario=0;step=0;updateBoard();document.querySelectorAll('[data-scenario]').forEach(b=>b.addEventListener('click',()=>{scenario=Number(b.dataset.scenario);step=0;updateBoard()}));document.getElementById('prev-step').onclick=()=>{step=Math.max(0,step-1);updateBoard()};document.getElementById('next-step').onclick=()=>{step=Math.min(2,step+1);updateBoard()}}window.scrollTo(0,0);if(page==='catalog'&&anchor)document.getElementById('chapter-'+Number(anchor))?.scrollIntoView();else if(page==='article-middle'&&anchor)document.getElementById(anchor)?.scrollIntoView();main.focus({preventScroll:true})}
 document.querySelector('.skip').addEventListener('click',event=>{event.preventDefault();main.focus();main.scrollIntoView()});
 window.addEventListener('hashchange',render);render();
