@@ -11,7 +11,24 @@ const scenarios=[[
 ['B 喊「我來」，穩定處理','A 不必為了「正拍接中間」勉強橫跨搶球。此時由準備較好的 B 處理，A 繼續回位。'],
 ['回球後恢復合作站位','B 完成回球，A 回到能支援的位置。不要只看誰碰到球，也要看兩人是否準備好應付下一拍。']
 ]];
-function court(sc=0,st=0,hero=false){let ax=sc===1?(st===0?89:st===1?112:139):(st===0?139:st===1?164:145),bx=258;let path=st===0?'M 147 155 Q 177 214 211 281':st===1?(sc===0?'M 211 283 L 183 301':'M 211 283 L 244 301'):(sc===0?'M 183 301 Q 206 230 232 161':'M 244 301 Q 209 233 155 163');const id=hero?'hero':'board';return `<svg class="court" viewBox="0 0 400 480" role="img" aria-label="俯視匹克球場：近端 A、B，遠端 C、D。實線表示球路，虛線表示移動。${sc===1?'A 正在回位，由 B 處理中間球。':'A 與 B 都站穩，由 A 處理中間球。'}"><defs><marker id="${id}-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L6 3.5 L0 7" fill="#e4b84a"/></marker><marker id="${id}-move" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L5 3 L0 6" fill="#f0f2df"/></marker></defs><rect x="76" y="20" width="248" height="440" rx="1" fill="#37644e"/><rect x="76" y="170" width="248" height="140" fill="#7f9a76"/><g stroke="#f4f4dd" stroke-width="2" fill="none"><rect x="76" y="20" width="248" height="440"/><path d="M76 170H324M76 310H324M200 20V170M200 310V460"/></g><path d="M65 240H335" stroke="#20382e" stroke-width="7"/><path d="M65 240H335" stroke="#f7f5db" stroke-dasharray="3 4" stroke-width="2"/><text x="201" y="215" fill="#f2f4e8" font-size="11" text-anchor="middle" letter-spacing="2">KITCHEN</text><text x="201" y="271" fill="#f2f4e8" font-size="11" text-anchor="middle" letter-spacing="2">KITCHEN</text><path d="${path}" stroke="#e4b84a" stroke-width="3" fill="none" marker-end="url(#${id}-arrow)"/>${sc===1?`<path d="M89 342 L143 342" stroke="#f0f2df" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#${id}-move)"/>`:''}${[[147,151,'C',true],[259,151,'D',true],[ax,329,'A',false],[bx,329,'B',false]].map(([x,y,l,opp])=>`<circle cx="${x}" cy="${y}" r="17" fill="${opp?'#d59c75':'#e6edc3'}" stroke="#20382e" stroke-width="2"/><text x="${x}" y="${y+5}" fill="#20382e" text-anchor="middle" font-size="14" font-weight="700">${l}</text>`).join('')}<circle cx="${st===0?211:st===1?(sc===0?183:244):232}" cy="${st===0?281:st===1?301:161}" r="5" fill="#f0d268"/><text x="200" y="439" text-anchor="middle" fill="#edf1dc" font-size="11">我方 · 面向球網</text></svg>`}
+function drawTacticalCourt({id, label, path, players, ball, movement = '', landing = '', viewBox = '0 0 400 480'}) {
+  const tokens = players.map(([x, y, l, opp]) => `<circle cx="${x}" cy="${y}" r="17" fill="${opp?'#d59c75':'#e6edc3'}" stroke="#20382e" stroke-width="2"/><text x="${x}" y="${y+5}" fill="#20382e" text-anchor="middle" font-size="14" font-weight="700">${l}</text>`).join('');
+  return `<svg class="court" viewBox="${viewBox}" role="img" aria-label="${label}">
+    <defs><marker id="${id}-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0 0 L6 3.5 L0 7" fill="#e4b84a"/></marker><marker id="${id}-move" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L5 3 L0 6" fill="#f0f2df"/></marker></defs><rect x="76" y="20" width="248" height="440" rx="1" fill="#37644e"/><rect x="76" y="170" width="248" height="140" fill="#7f9a76"/><g stroke="#f4f4dd" stroke-width="2" fill="none"><rect x="76" y="20" width="248" height="440"/><path d="M76 170H324M76 310H324M200 20V170M200 310V460"/></g><path d="M65 240H335" stroke="#20382e" stroke-width="7"/><path d="M65 240H335" stroke="#f7f5db" stroke-dasharray="3 4" stroke-width="2"/><text x="201" y="215" fill="#f2f4e8" font-size="11" text-anchor="middle" letter-spacing="2">KITCHEN</text><text x="201" y="271" fill="#f2f4e8" font-size="11" text-anchor="middle" letter-spacing="2">KITCHEN</text>
+    <path d="${path}" stroke="#e4b84a" stroke-width="3" fill="none" marker-end="url(#${id}-arrow)"/>
+    ${movement}${tokens}
+    <circle cx="${ball[0]}" cy="${ball[1]}" r="5" fill="#f0d268"/>${landing}
+    <text x="200" y="439" text-anchor="middle" fill="#edf1dc" font-size="11">我方 · 面向球網</text>
+  </svg>`;
+}
+
+function court(sc=0,st=0,hero=false){let ax=sc===1?(st===0?89:st===1?112:139):(st===0?139:st===1?164:145),bx=258;let path=st===0?'M 147 155 Q 177 214 211 281':st===1?(sc===0?'M 211 283 L 183 301':'M 211 283 L 244 301'):(sc===0?'M 183 301 Q 206 230 232 161':'M 244 301 Q 209 233 155 163');const id=hero?'hero':'board';return drawTacticalCourt({
+    id, label: `俯視匹克球場：近端 A、B，遠端 C、D。實線表示球路，虛線表示移動。${sc===1?'A 正在回位，由 B 處理中間球。':'A 與 B 都站穩，由 A 處理中間球。'}`, path,
+    players: [[147,151,'C',true],[259,151,'D',true],[ax,329,'A',false],[bx,329,'B',false]],
+    ball: [st===0?211:st===1?(sc===0?183:244):232, st===0?281:st===1?301:161],
+    movement: sc===1?`<path d="M89 342 L143 342" stroke="#f0f2df" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#${id}-move)"/>`:''
+  });
+}
 function home(){return `<section class="hero"><div><p class="eyebrow">A FIELD GUIDE TO PICKLEBALL</p><h1>看懂匹克球，<br>每一拍都有想法。</h1><p class="lead">從場地規則到雙打攻防，<br>用圖解理解站位、球路與實戰選擇。</p><div class="actions"><a class="btn" href="#beginner">從基礎開始 <span>↗</span></a><a class="btn secondary" href="#catalog">瀏覽所有主題</a></div></div><div class="hero-board"><div class="board-head"><span>FIELD NOTE / 07</span><span>雙打站位與分工</span></div>${court(0,0,true)}<div class="board-caption"><span>中間球，是兩個人的共同判斷。</span><span>01 / 03</span></div></div></section><div class="section-top"><h2>找到你的閱讀起點</h2><p>同一套觀念，兩條閱讀路線。</p></div><div class="routes"><a class="route" href="#beginner"><span class="route-no">Route 01 / Start here</span><span class="arrow">↗</span><h3>新手入門</h3><p>剛開始打，先建立基本觀念。</p><small>場地 → 規則 → 動作 → 基本回合</small></a><a class="route" href="#advanced"><span class="route-no">Route 02 / Think deeper</span><span class="arrow">↗</span><h3>進階實戰</h3><p>已經能對打，想提升判斷與配合。</p><small>前三拍 → 過渡區 → 雙打合作 → 網前攻防</small></a></div><div class="feature"><div><span class="eyebrow">第一篇圖解筆記</span><p>中間球一定讓正拍接？從兩個情境看懂分工。</p></div><a href="#article-middle">雙打中間球應該由誰接？ ↗</a></div><div class="section-top"><h2>完整觀念目錄</h2><p>12 章，從第一個回合到戰術配合。</p></div>${catalogControls()}<div id="catalog-list" class="catalog"></div>`}
 function catalogControls(){return `<div class="toolbar"><label for="search" class="sr-only">搜尋文章題目</label><input class="search" id="search" type="search" placeholder="搜尋觀念，例如：握拍、中間球、Drop"><label for="level" class="sr-only">內容深度</label><select id="level"><option value="">全部深度</option><option>基礎</option><option>進階</option></select><label for="availability" class="sr-only">閱讀狀態</label><select id="availability"><option value="">全部內容</option><option value="ready">可閱讀</option></select></div><p id="result-count" class="result-count" aria-live="polite"></p>`}
 function renderCatalog(){const q=document.getElementById('search').value.trim().toLowerCase(),level=document.getElementById('level').value,ready=document.getElementById('availability').value;let count=0;const chapterId=Number(location.hash.split('/')[1]);document.getElementById('catalog-list').innerHTML=chapters.map(c=>{let topics=c.topics.filter(t=>!t.heading&&(!q||(t.title+' '+c.title).toLowerCase().includes(q))&&(!level||t.level===level)&&(!ready||t.route));count+=topics.length;if(!topics.length)return '';let group='';const rows=c.topics.map(t=>{if(t.heading){group=t.title;return ''}if(!topics.includes(t))return '';let g=group?`<li class="subhead">${group}</li>`:'';group='';return g+`<li class="topic"><span class="tag ${t.level==='進階'?'advanced':''}">${t.level}</span><span class="topic-title">${t.route?`<a href="#${t.route}">${t.title}</a>`:t.title}</span><span class="status">${t.route?'可閱讀 ↗':'撰寫中'}</span></li>`}).join('');return `<details class="chapter" id="chapter-${c.id}" ${q||level||ready||chapterId===c.id?'open':''}><summary><span class="chapter-number">${num(c.id)}</span><span><h3>${c.title}</h3><p>${c.description}</p></span><span class="chevron" aria-hidden="true">＋</span></summary><ul>${rows}</ul></details>`}).join('')||'<div class="empty">找不到符合的主題。試試「站位」「發球」或清除篩選。</div>';document.getElementById('result-count').textContent=`${count} 個主題符合條件 · 文章逐步更新，目前 ${articleRoutes.size} 篇可閱讀。`}
@@ -23,53 +40,45 @@ function info(sources){return `<div class="prose"><div class="page-head"><p clas
 const rallyFrames = [
   {
     title: '第一拍 · A 斜線發球',
-    path: 'M180 482 L80 69',
-    players: [[180, 491], [75, 467], [75, 33], [187, 170]],
-    bounce: [80, 69, '1'],
+    path: 'M262 467 Q234 275 138 54',
+    players: [[262, 479], [132, 452], [132, 18], [271, 151]],
+    bounce: [138, 54, '1'],
     note: '近端的 A 從右側底線後發球，球越過網前的 Kitchen，落在遠端左側的對角發球區。① 是這個回合必須出現的第一次落地。'
   },
   {
     title: '第二拍 · C 等球彈起再接發',
-    path: 'M80 67 L166 424',
-    players: [[180, 486], [75, 467], [65, 49], [187, 170]],
-    bounce: [166, 424, '2'],
+    path: 'M138 52 Q176 278 245 409',
+    players: [[262, 471], [132, 452], [119, 34], [271, 151]],
+    bounce: [245, 409, '2'],
     note: 'C 接起已經彈過的發球，將球回深。② 是接發球在 A、B 這側的落點。即使球飛得很慢，A 也要先等這次落地。'
   },
   {
     title: '第三拍 · A 在落地後回擊',
-    path: 'M166 422 L177 215',
-    players: [[177, 444], [75, 467], [83, 141], [187, 170]],
+    path: 'M245 407 Q247 280 258 200',
+    players: [[258, 429], [132, 452], [142, 126], [271, 151]],
     note: 'A 讓接發球彈起才出手，這裡示範把球送向對方網前。球若還在空中，對手這時可以在 Kitchen 線外截擊，也可以等球彈起再打。'
   }
 ];
 
 function rallyCourt(frame) {
-  const players = frame.players.map(([x, y], i) => {
-    const letter = 'ABCD'[i];
-    return `<circle cx="${x}" cy="${y}" r="11" fill="${i < 2 ? '#e6edc3' : '#d59c75'}" stroke="#20382e"/>
-      <text x="${x}" y="${y + 4}" text-anchor="middle" fill="#20382e" font-size="12" font-weight="700">${letter}</text>`;
-  }).join('');
-  const landing = frame.bounce ? `<circle cx="${frame.bounce[0]}" cy="${frame.bounce[1]}" r="10" fill="#ffe68b" stroke="#20382e"/>
-    <text x="${frame.bounce[0]}" y="${frame.bounce[1] + 4}" text-anchor="middle" font-size="12" font-weight="700">${frame.bounce[2]}</text>` : '';
-  return `<svg class="court" viewBox="0 0 260 522" role="img" aria-label="${frame.title}。${frame.note}">
-    <defs><marker id="rally-arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0 0L5 2.5L0 5" fill="#ffe68b"/></marker></defs>
-    <rect x="30" y="35" width="200" height="440" fill="#37644e"/>
-    <rect x="30" y="185" width="200" height="140" fill="#819d7b"/>
-    <g stroke="#f5f5df" stroke-width="2" fill="none"><rect x="30" y="35" width="200" height="440"/><path d="M30 185H230M30 325H230M130 35V185M130 325V475"/></g>
-    <path d="M23 255H237" stroke="#20382e" stroke-width="5"/>
-    <text x="130" y="249" text-anchor="middle" fill="#fff" font-size="10">球網</text>
-    <text x="130" y="296" text-anchor="middle" fill="#fff" font-size="10">Kitchen</text>
-    <path d="${frame.path}" stroke="#ffe68b" stroke-width="3" fill="none" marker-end="url(#rally-arrow)"/>
-    ${players}${landing}
-    <g text-anchor="middle" fill="#20382e" font-size="11"><text x="130" y="15">對方 C、D</text><text x="130" y="516">我方 A、B</text></g></svg>`;
+  const players = frame.players.map(([x, y], index) => [x, y, 'ABCD'[index], index > 1]);
+  const ball = frame.bounce || [258, 200];
+  const landing = frame.bounce
+    ? `<text x="${ball[0] + 17}" y="${ball[1] + 5}" fill="#f0d268" font-size="16" font-weight="700">${ball[2] === '1' ? '①' : '②'}</text>`
+    : '';
+  // Include the space behind both baselines for the server and receiver.
+  return drawTacticalCourt({
+    id: 'rally', label: `${frame.title}。${frame.note}`, viewBox: '0 -20 400 520',
+    path: frame.path, players, ball, landing
+  });
 }
 
 function rallyBoard() {
   return `<h2>在球場上看前三拍</h2>
     <section class="tactics" aria-label="前三拍戰術板">
-      <div class="board-head"><span>TACTICAL BOARD / 01.01</span><span>雙打 · 俯視圖</span></div>
+      <div class="board-head"><span>TACTICAL BOARD / 01.01</span><span>俯視示意 · 非球速模擬</span></div>
       <div id="rally-frame" class="tactics-body"></div>
-      <div class="legend">黃實線箭頭表示這一拍的球路；①、② 表示雙方必須等候的落地順序。球員位置是示例。</div>
+      <div class="legend">A、B：我方（淺綠） · C、D：對方（橘）<br>黃色實線 → 球路　①、② 表示雙方必須等候的落地順序。球員位置是示例。</div>
       <div class="controls"><button type="button" id="rally-prev">← 上一拍</button><span id="rally-count"></span><button type="button" id="rally-next">下一拍 →</button></div>
     </section>`;
 }
@@ -81,7 +90,7 @@ function mountRallyBoard() {
   function show() {
     const frame = rallyFrames[index];
     document.getElementById('rally-frame').innerHTML = rallyCourt(frame) +
-      `<div class="step-copy" aria-live="polite"><h3>${frame.title}</h3><p>${frame.note}</p></div>`;
+      `<div class="step-copy" aria-live="polite"><p class="eyebrow">STEP ${num(index + 1)}</p><h3>${frame.title}</h3><p>${frame.note}</p></div>`;
     document.getElementById('rally-count').textContent = `${index + 1} / ${rallyFrames.length}`;
     prev.disabled = index === 0;
     next.disabled = index === rallyFrames.length - 1;
